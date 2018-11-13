@@ -19,11 +19,11 @@ class ViewController: UIViewController,MTKViewDelegate {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
         metalView.delegate = self
-//        metalView.framebufferOnly = true
-//        metalView.colorPixelFormat = .bgra8Unorm
-//        metalView.contentScaleFactor = UIScreen.main.scale
+        metalView.framebufferOnly = true
+        metalView.colorPixelFormat = .bgra8Unorm
+        metalView.contentScaleFactor = UIScreen.main.scale
         metalView.clearColor = MTLClearColor.init()
-//        metalView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        metalView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         
         metalRenderer = MetalRenderer.init(view: metalView)
 

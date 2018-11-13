@@ -14,18 +14,22 @@ struct Vertex{
     
     var x,y,z: Float     // position data
 //    var r,g,b,a: Float   // color data
-   
+    var s,t: Float       // texture coordinates
+    func texFloatBuffer() -> [Float] {
+        return [s,t]
+    }
+    
+    func vertexFloatBuffer() -> [Float] {
+        return [x,y,z]
+    }
     
     func floatBuffer() -> [Float] {
-        return [x,y,z]
+        return [x,y,z,s,t]
     }
     
 };
 struct TexCoordinate{
-     var s,t: Float       // texture coordinates
-    func floatBuffer() -> [Float] {
-        return [s,t]
-    }
+   
 };
 //struct TexCoordinate{
 //
@@ -57,7 +61,7 @@ class MetalRenderer: NSObject {
     
     func setupRenderer(){
         configurePipelineDescriptor(vertexFunction: "basic_vertex", fragmentFunction: "basic_fragment")
-        addVertexDescriptionTo(pipelineDesc: pipelineDescriptor)
+//        addVertexDescriptionTo(pipelineDesc: pipelineDescriptor)
         pipelineState = try! mtlDevice?.makeRenderPipelineState(descriptor: pipelineDescriptor)
         
         let image = UIImage.init(named: "ford")
@@ -66,64 +70,42 @@ class MetalRenderer: NSObject {
         texture = loadTexture(imagePointer: pointer, imageSize: (image?.size)!, bytesPerRow: (image?.cgImage?.bytesPerRow)!)
 
     }
-    
-    private func addVertexDescriptionTo(pipelineDesc:MTLRenderPipelineDescriptor){
-        
-        let vertexDescriptor = MTLVertexDescriptor()
-        vertexDescriptor.attributes[0].format = .float3
-        vertexDescriptor.attributes[0].bufferIndex = 0
-        vertexDescriptor.attributes[0].offset = 0
-        vertexDescriptor.attributes[1].format = .float2
-        vertexDescriptor.attributes[1].bufferIndex = 0
-        vertexDescriptor.attributes[1].offset = 4 * MemoryLayout<Float>.size
-        vertexDescriptor.layouts[0].stride = 6 * MemoryLayout<Float>.size
-        vertexDescriptor.layouts[0].stepFunction = MTLVertexStepFunction.perVertex
-        
-        pipelineDesc.vertexDescriptor = vertexDescriptor
-        
-        
-    }
+
     
     private func loadVertexData2(mtlDevice:MTLDevice) -> (MTLBuffer,MTLBuffer){
         
-        let va = Vertex(x: -1, y: 1, z: 0)
-        let vb = Vertex(x: 1, y: 1, z: 0)
-        let vc = Vertex(x: -1, y: -1, z: 0)
-        let vd = Vertex(x: 1, y: -1, z: 0)
+        let va = Vertex(x: -1.0, y: 1.0, z: 0.0, s: 0.0, t: 0.0)
+        let vb = Vertex(x: 1.0, y: 1.0, z: 0.0, s: 1.0, t: 0.0)
+        let vc = Vertex(x: -1.0, y: -1.0, z: 0.0, s: 0.0, t: 1.0)
+        let vd = Vertex(x: 1.0, y: -1.0, z: 0.0, s: 1.0, t: 1.0)
         
-        let ta = TexCoordinate(s: 0, t: 0)
-        let tb = TexCoordinate(s: 1, t: 0)
-        let tc = TexCoordinate(s: 0, t: 1)
-        let td = TexCoordinate(s: 1, t: 1)
-        
-        indices = [va,vb,vc,
-            vc,vb,vd
+        indices = [va,vc,vb,
+            vc,vd, vb
         ]
         
-        var vertices:[Float] = [ -1.0 , -1.0, 0.0, 1.0 ,
-                                 1.0, -1.0, 0.0, 1.0 ,
-                                 -1.0,  1.0, 0.0, 1.0 ,
-                                 1.0,  1.0, 0.0, 1.0 ];
+        var vertices = [Float]()
+        var textureCoordinates = [Float]()
         
-        let textureCoordinates:[Float] = [0.0, 1.0,
-                                          1.0, 1.0,
-                                          0.0, 0.0,
-                                          1.0, 0.0];
-        
+        var i = 0
+        var j = 0
         for v in indices! {
-            vertices = v.floatBuffer()
+            vertices.insert(contentsOf: v.vertexFloatBuffer(), at: i)
+            textureCoordinates.insert(contentsOf: v.texFloatBuffer(), at: j)
+            i = i+3
+            j = j+2
             
         }
         
        
-        
         let bufferSize = vertices.count * MemoryLayout.size(ofValue: vertices[0])
         
         let vertexBuffer = mtlDevice.makeBuffer(bytes: vertices, length: bufferSize, options: [])
         
+        vertexBuffer?.label = "vertices"
         let bufferSize2 = textureCoordinates.count * MemoryLayout.size(ofValue: textureCoordinates[0])
         
         let texBuffer = mtlDevice.makeBuffer(bytes: textureCoordinates, length: bufferSize2, options: [])
+        texBuffer?.label = "texCoordinate"
         
         
         return (vertexBuffer!,texBuffer!)
@@ -186,7 +168,7 @@ class MetalRenderer: NSObject {
     func render(){
         configureRenderCommand()
         
-        commandEncoder?.drawPrimitives(type: MTLPrimitiveType.triangle, vertexStart: 0, vertexCount: 3)
+        commandEncoder?.drawPrimitives(type: MTLPrimitiveType.triangle, vertexStart: 0, vertexCount: (indices?.count)!)
         commandEncoder?.endEncoding()
         if let drawable = view.currentDrawable {
             commandBuffer?.present(drawable)
