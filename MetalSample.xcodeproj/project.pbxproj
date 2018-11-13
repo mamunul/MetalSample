@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		DA02E91221982C7F00F54953 /* MetalRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA02E91121982C7F00F54953 /* MetalRenderer.swift */; };
+		DA02E91421983E1100F54953 /* shader.metal in Sources */ = {isa = PBXBuildFile; fileRef = DA02E91321983E1100F54953 /* shader.metal */; };
 		DA942C842181AF9700FFD38C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA942C832181AF9700FFD38C /* AppDelegate.swift */; };
 		DA942C862181AF9700FFD38C /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA942C852181AF9700FFD38C /* ViewController.swift */; };
 		DA942C892181AF9700FFD38C /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DA942C872181AF9700FFD38C /* Main.storyboard */; };
@@ -34,6 +36,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		DA02E91121982C7F00F54953 /* MetalRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetalRenderer.swift; sourceTree = "<group>"; };
+		DA02E91321983E1100F54953 /* shader.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = shader.metal; sourceTree = "<group>"; };
 		DA942C802181AF9700FFD38C /* MetalSample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MetalSample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		DA942C832181AF9700FFD38C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		DA942C852181AF9700FFD38C /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -103,6 +107,8 @@
 				DA942C8A2181AF9900FFD38C /* Assets.xcassets */,
 				DA942C8C2181AF9900FFD38C /* LaunchScreen.storyboard */,
 				DA942C8F2181AF9900FFD38C /* Info.plist */,
+				DA02E91121982C7F00F54953 /* MetalRenderer.swift */,
+				DA02E91321983E1100F54953 /* shader.metal */,
 			);
 			path = MetalSample;
 			sourceTree = "<group>";
@@ -256,8 +262,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DA02E91421983E1100F54953 /* shader.metal in Sources */,
 				DA942C862181AF9700FFD38C /* ViewController.swift in Sources */,
 				DA942C842181AF9700FFD38C /* AppDelegate.swift in Sources */,
+				DA02E91221982C7F00F54953 /* MetalRenderer.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
