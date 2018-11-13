@@ -15,25 +15,14 @@ struct Vertex{
     var x,y,z: Float     // position data
 //    var r,g,b,a: Float   // color data
     var s,t: Float       // texture coordinates
-    func texFloatBuffer() -> [Float] {
-        return [s,t]
-    }
-    
-    func vertexFloatBuffer() -> [Float] {
-        return [x,y,z]
-    }
     
     func floatBuffer() -> [Float] {
         return [x,y,z,s,t]
     }
     
 };
-struct TexCoordinate{
-   
-};
-//struct TexCoordinate{
-//
-//}
+
+
 
 class MetalRenderer: NSObject {
     
@@ -50,6 +39,7 @@ class MetalRenderer: NSObject {
     var commandEncoder:MTLRenderCommandEncoder?
     var texture:MTLTexture?
     var indices:[Vertex]?
+    var vbuffer:MTLBuffer?
     
     init(view:MTKView) {
         self.view = view
@@ -61,7 +51,8 @@ class MetalRenderer: NSObject {
     
     func setupRenderer(){
         configurePipelineDescriptor(vertexFunction: "basic_vertex", fragmentFunction: "basic_fragment")
-//        addVertexDescriptionTo(pipelineDesc: pipelineDescriptor)
+
+        (vbuffer) = loadVertexData2(mtlDevice: mtlDevice!)
         pipelineState = try! mtlDevice?.makeRenderPipelineState(descriptor: pipelineDescriptor)
         
         let image = UIImage.init(named: "ford")
@@ -72,7 +63,7 @@ class MetalRenderer: NSObject {
     }
 
     
-    private func loadVertexData2(mtlDevice:MTLDevice) -> (MTLBuffer,MTLBuffer){
+    private func loadVertexData2(mtlDevice:MTLDevice) -> (MTLBuffer?){
         
         let va = Vertex(x: -1.0, y: 1.0, z: 0.0, s: 0.0, t: 0.0)
         let vb = Vertex(x: 1.0, y: 1.0, z: 0.0, s: 1.0, t: 0.0)
@@ -84,15 +75,11 @@ class MetalRenderer: NSObject {
         ]
         
         var vertices = [Float]()
-        var textureCoordinates = [Float]()
-        
+
         var i = 0
-        var j = 0
         for v in indices! {
-            vertices.insert(contentsOf: v.vertexFloatBuffer(), at: i)
-            textureCoordinates.insert(contentsOf: v.texFloatBuffer(), at: j)
-            i = i+3
-            j = j+2
+            vertices.insert(contentsOf: v.floatBuffer(), at: i)
+          i = i+5
             
         }
         
@@ -102,13 +89,9 @@ class MetalRenderer: NSObject {
         let vertexBuffer = mtlDevice.makeBuffer(bytes: vertices, length: bufferSize, options: [])
         
         vertexBuffer?.label = "vertices"
-        let bufferSize2 = textureCoordinates.count * MemoryLayout.size(ofValue: textureCoordinates[0])
-        
-        let texBuffer = mtlDevice.makeBuffer(bytes: textureCoordinates, length: bufferSize2, options: [])
-        texBuffer?.label = "texCoordinate"
         
         
-        return (vertexBuffer!,texBuffer!)
+        return (vertexBuffer)
     }
     
     private func configurePipelineDescriptor(vertexFunction:String, fragmentFunction:String){
@@ -134,13 +117,9 @@ class MetalRenderer: NSObject {
         commandEncoder = commandBuffer?.makeRenderCommandEncoder(descriptor: renderPassDescriptor!)
         
         commandEncoder?.setRenderPipelineState(pipelineState!)
-        let (vbuffer,tBuffer) = loadVertexData2(mtlDevice: mtlDevice!)
+       
         
         commandEncoder?.setVertexBuffer(vbuffer, offset: 0, index: 0)
-        commandEncoder?.setVertexBuffer(tBuffer, offset: 0, index: 1)
-        
-      
-        
         
         let sampler = defaultSampler(device: mtlDevice!)
         

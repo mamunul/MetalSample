@@ -10,22 +10,21 @@
 using namespace metal;
 
 struct VertexIn{
-    float3 vertexCoordinate;
-    float2 textureCoordinate;
+    packed_float3 vertexCoordinate;//must be packed for buffer
+    packed_float2 textureCoordinate;
 } ;
 
 struct VertexOut{
-    float3 color;
     float4 vertexCoordinate [[position]];
     float2 textureCoordinate;
     
 };
 
-vertex VertexOut basic_vertex(constant packed_float3* vertices [[buffer(0)]], constant packed_float2* tex [[buffer(1)]], uint vid [[vertex_id]]){
+vertex VertexOut basic_vertex(const device VertexIn* vertices [[buffer(0)]],uint vid [[vertex_id]]){
     
     VertexOut vertexOut;
-    vertexOut.vertexCoordinate = float4(vertices[vid],1.0);
-    vertexOut.textureCoordinate = tex[vid];
+    vertexOut.vertexCoordinate = float4(vertices[vid].vertexCoordinate,1.0);
+    vertexOut.textureCoordinate = vertices[vid].textureCoordinate;
     
     return vertexOut;
 }
