@@ -23,6 +23,7 @@ class ViewController: UIViewController,MTKViewDelegate {
         metalView.colorPixelFormat = .bgra8Unorm
         metalView.contentScaleFactor = UIScreen.main.scale
         metalView.clearColor = MTLClearColor.init()
+        metalView.framebufferOnly = false
         metalView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         
         metalRenderer = MetalRenderer.init(view: metalView)

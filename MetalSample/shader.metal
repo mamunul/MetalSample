@@ -33,5 +33,5 @@ fragment float4 basic_fragment(const VertexOut vertices [[stage_in]],
                                texture2d<float>  tex2D     [[ texture(0) ]],
                                sampler           sampler2D [[ sampler(0) ]]){
 //    return float4(0.3,0.5,0.5,1.0);
-    return tex2D.sample(sampler2D,vertices.textureCoordinate);
+    return tex2D.sample(sampler2D,vertices.textureCoordinate)*float4(0.3,0.2,0.5,1.0);
 }
